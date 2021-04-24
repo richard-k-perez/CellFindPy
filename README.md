@@ -7,15 +7,15 @@ CellFindPy performs recursive community detection with automatic gamma/resolutio
 \
 **How to use:**
 1) Download the package into a directory of your choice.
-2) From the command line, cd into the directory containing your Anndata .h5ad file
+2) From the command line, cd into the directory containing your Anndata .h5ad file.
 3) Type python /path/to/CellFindPy/CellFindPy.py -i file.h5ad -o output_folder
 \
 \
 \
-**Optional Parameters:** \
-Optional parameters can be used by advanced users or if the default parameters are not optimal for your dataset. \
-
-For more information, type python /path/to/CellFindPy/CellFindPy.py -h \
+**Optional Parameters:**
+Optional parameters can be used by advanced users or if the default parameters are not optimal for your dataset.
+\
+For more information, type python /path/to/CellFindPy/CellFindPy.py -h
 \
 -i--------Provide Anndata file name.\
 -o--------Provide output folder.\
