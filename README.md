@@ -3,7 +3,7 @@
 **Description:** \
 CellFindPy performs recursive community detection with automatic gamma/resolution parameter optimization based on biologically meaningful parameters such as gene log2 fold expression difference and false discovery rate. Initial community partitioning produces parent communities which are recursively partitioned. A child community is partitioned from the parent community if it passes a defined genetic test. However, the child community is only retained if it is robust to bootstrapping (resampling with replacement). If a child community is retained, it is recursively partitioned and so on. After all communities have been partitioned, a final genetic test ensures that all communities are unique. With synthetic sc-RNA-seq data composed of known ground truth communities, CellFindPy demonstrates superior performance at detecting cell populations than Leiden or Louvain algorithms (mean adjusted Rand Index improvement = ~10%). With a real sc-RNA-seq dataset of over 1.2 million cells across 23 replicates, CellFindPy partitions on average twice as many small populations (population size <1% of total sample) while maintaining equivalent replicability as Leiden and Louvain. Additionally, CellFindPy enables biologists to partition cell populations using biologically meaningful parameters in place of abstract parameters.
 \
-**How to use:** \
+**How to use:**
 1) Download the package into a directory of your choice.
 2) From the command line, cd into the directory containing your Anndata .h5ad file
 3) Type python /path/to/CellFindPy/CellFindPy.py -i file.h5ad -o output_folder
