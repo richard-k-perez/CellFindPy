@@ -17,15 +17,15 @@ For more information, type `python /path/to/CellFindPy/CellFindPy.py -h`
 -o--------Provide output folder.\
 -s--------True or False: Do you want to produce gene expression excel sheets?\
 -c--------leiden or louvain community detection?\
--b--------True or False: Do you want rank genes to adjust for batch?\
--bk-------If you want rank genes to adjust for batch, what is the batch key in Anndata.obs?\
+-b--------True or False: Do you want scanpy.rank_genes_groups to adjust for batch?\
+-bk-------If you want scanpy.rank_genes_groups to adjust for batch, what is the batch key in Anndata.obs?\
 -mcnts----Genes with less counts than this threshold will be filtered out.\
 -mcells---Genes found in less than this number of cells will be filtered out.\
 -nboot----For community stability (resampling with replacmenet), how many bootstraps?\
 -nbf------For community stability (resampling with replacmenet), Minimum fraction of cells consistently clustering together?\
 -lg2FC----log2(value) threshold for average expression difference of all significant genes.\
 -p--------False Discovery Rate.\
--msg------Minimum number of significant for each community.\
+-msg------Minimum number of significant genes for each community.\
 -ncom-----Initial number of communities to opitmize resolution to?\
 -cfrac----Maximum size of largest community during resolution optimization?\
 -ng-------Number of genes from each community to make UMAP projections for?
