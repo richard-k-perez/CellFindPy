@@ -38,6 +38,7 @@ To make it easy to label communities, at all 5 levels and for the complete CellF
 2) Mean expression of each gene within each community (non-significant values are zeroed).
 3) Top 100 differentially expressed genes for each community (some communities may have less than 100 genes).
 4) Differential expression of each gene within each community (non-significant values are zeroed).
+\
 Within `/figures` UMAP projections of the top n differentially expressed genes are generated for community at each level and for the main results (default 20 genes). 
 
 ## **Requirements:**
