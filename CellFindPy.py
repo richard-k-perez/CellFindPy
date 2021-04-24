@@ -5,6 +5,8 @@ import numpy as np
 import os
 import scanpy as sc
 import warnings
+from numba.core.errors import NumbaPerformanceWarning
+warnings.simplefilter('ignore', category=NumbaPerformanceWarning)
 
 def main(AnnData, output_folder, **params):
 	# Set warning settings
@@ -39,7 +41,7 @@ def main(AnnData, output_folder, **params):
 	sc.pp.neighbors(adata, random_state=0, n_neighbors=100, method='umap')
 	sc.tl.umap(adata, random_state=0)
 
-	print('Genetic Parameters: Average log2FC_threshold = log2({}), B-H FDR  = {}'.format(2**params['logFC_threshold'], params['pval']))
+	print('Genetic Parameters: Average log2FC greater than log2({}) from at least {} significant genes at B-H FDR  of {}.'.format(2**params['logFC_threshold'], params['min_sig_genes'], params['pval']))
 	# Find initial community detection resolution
 	init_res = cf.find_resolution(adata, **params)
 	# Get initial communities
@@ -68,16 +70,16 @@ if __name__ == '__main__':
 	implementing recursive community detection based of biologically relevant parameters and does away with tuning the resolution parameter. \
 	To use CellFindPy please cd into the directory where your AnnData file is located and call CellFindPy from the command line.')
 
-	parser.add_argument('-i', '--AnnData', help = 'Provide Anndata file name.')
-	parser.add_argument('-o', '--output_folder', default = '~/', help ='Provide output folder.')
+	parser.add_argument('-i', '--AnnData', help = "Provide Anndata file name.")
+	parser.add_argument('-o', '--output_folder', default = '~/', help ="Provide output folder.")
 	parser.add_argument("-s", "--sheets", nargs="?", default=True, help="True or False: Do you want to produce gene expression excel sheets?")
-	parser.add_argument("-c", "--community", nargs="?", default="leiden", help="leiden or louvain Community Detection? (leiden recommended)")
+	parser.add_argument("-c", "--community", nargs="?", default="leiden", help="leiden or louvain community detection? (leiden recommended)")
 	parser.add_argument("-b", "--batch", nargs="?", default=False, help="True or False: Do you want rank genes to adjust for batch?")
 	parser.add_argument("-bk", "--batch_key", nargs="?", default='', help="If you want rank genes to adjust for batch, what is the batch key in Anndata.obs?")
 	parser.add_argument("-mcnts", "--min_counts", nargs="?", default=5, help="Genes with less counts than this threshold will be filtered out.")
 	parser.add_argument("-mcells", "--min_cells", nargs="?", default=5, help="Genes found in less than this number of cells will be filtered out.")
 	parser.add_argument("-nboot", "--nbootstraps", nargs="?", default=10, help="For community stability (resampling with replacmenet), how many bootstraps?")
-	parser.add_argument("-nbf", "--nbootfraction", nargs="?", default=0.8, help="For community stability (resampling with replacmenet), Minimum number of cells consistently clustering together?")
+	parser.add_argument("-nbf", "--nbootfraction", nargs="?", default=0.8, help="For community stability (resampling with replacmenet), Minimum fraction of cells consistently clustering together?")
 	parser.add_argument("-lg2FC", "--log2FC_threshold", nargs="?", default=np.log2(1.25), help="log2(value) threshold for average expression difference of all significant genes.")
 	parser.add_argument("-p", "--pval", nargs="?", default=10**-6, help="False Discovery Rate.")
 	parser.add_argument("-msg", "--min_sig_genes", nargs="?", default=20, help="Minimum number of significant for each community.")
@@ -95,5 +97,5 @@ if __name__ == '__main__':
 	ncom=args.n_communities, cfrac=args.commfraction)
 
 	print('CellFindPy Complete.')
-	print('All output files are located at {}/{}/'.format(path, output_folder))
+	print('All output files are located at {}/{}/'.format(path, args.output_folder.split(' ')[-1]))
 	os.chdir(path) # Change directory back

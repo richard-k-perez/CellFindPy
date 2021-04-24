@@ -193,7 +193,7 @@ def do_final_de_eval(adata, **params):
     overclustered_ = results_[np.ravel(results_.values==False)].index.tolist() # Get non-unique clusters.
     # Collapse clusters that are not unique compared to all other clusters and it is not a parent node.
     while len(overclustered_) > 0:
-        print('Communities that failed the final genetic test: {}'.format(overclustered_))
+        print('Communities that are not unique with respect to all other communities: {}'.format(overclustered_))
         c_len = [len(c.split('.')) for c in overclustered_] # How many levels exist for each cluster
         c = overclustered_[np.argmax(c_len)] # Choose the community with the most levels.
         if len(c.split('.')) > 1:
