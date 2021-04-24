@@ -33,9 +33,11 @@ For more information, type python /path/to/CellFindPy/CellFindPy.py -h
 -ncom-----Initial number of communities to opitmize resolution to?\
 -cfrac----Maximum size of largest community during resolution optimization?\
 -ng-------Number of genes from each community to make UMAP projections for?\
-
 \
-Output: X
-
 \
-Requirements: X
+\
+**Output: X**
+\
+\
+\
+**Requirements: X**
