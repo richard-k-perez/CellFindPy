@@ -33,8 +33,8 @@ For more information, type `python /path/to/CellFindPy/CellFindPy.py -h`
 ## **Output:**
 
 ## **Requirements:**
-anndata==0.6.22.post1
-leidenalg==0.7.0
-numpy==1.19.1
-pandas==1.1.2
-scanpy==1.5.1
+anndata==0.6.22.post1\
+leidenalg==0.7.0\
+numpy==1.19.1\
+pandas==1.1.2\
+scanpy==1.5.1\
