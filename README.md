@@ -13,22 +13,22 @@ Optional parameters can be used by advanced users or if the default parameters a
 \
 For more information, type `python /path/to/CellFindPy/CellFindPy.py -h`
 \
--i--------Provide Anndata file name.\
--o--------Provide output folder.\
--s--------True or False: Do you want to produce gene expression excel sheets?\
--c--------leiden or louvain community detection?\
--b--------True or False: Do you want scanpy.rank_genes_groups to adjust for batch?\
--bk-------If you want scanpy.rank_genes_groups to adjust for batch, what is the batch key in Anndata.obs?\
--mcnts----Genes with less counts than this threshold will be filtered out.\
--mcells---Genes found in less than this number of cells will be filtered out.\
--nboot----For community stability (resampling with replacmenet), how many bootstraps?\
--nbf------For community stability (resampling with replacmenet), Minimum fraction of cells consistently clustering together?\
--lg2FC----log2(value) threshold for average expression difference of all significant genes.\
--p--------False Discovery Rate.\
--msg------Minimum number of significant genes for each community.\
--ncom-----Initial number of communities to opitmize resolution to?\
--cfrac----Maximum size of largest community during resolution optimization?\
--ng-------Number of genes from each community to make UMAP projections for?
+-i -------- Provide Anndata file name.\
+-o -------- Provide output folder.\
+-s -------- True or False: Do you want to produce gene expression excel sheets?\
+-c -------- leiden or louvain community detection?\
+-b -------- True or False: Do you want scanpy.rank_genes_groups to adjust for batch?\
+-bk ------- If you want scanpy.rank_genes_groups to adjust for batch, what is the batch key in Anndata.obs?\
+-mcnts ---- Genes with less counts than this threshold will be filtered out.\
+-mcells --- Genes found in less than this number of cells will be filtered out.\
+-nboot ---- For community stability (resampling with replacmenet), how many bootstraps?\
+-nbf ------ For community stability (resampling with replacmenet), Minimum fraction of cells consistently clustering together?\
+-lg2FC ---- log2(value) threshold for average expression difference of all significant genes.\
+-p -------- False Discovery Rate.\
+-msg ------ Minimum number of significant genes for each community.\
+-ncom ----- Initial number of communities to opitmize resolution to?\
+-cfrac ---- Maximum size of largest community during resolution optimization?\
+-ng ------- Number of genes from each community to make UMAP projections for?
 
 ## **Output:**
 CellfindPy aims to identify all possible communities within your dataset based on user defined biological parameters. For larger datasets, this can result in a very large number of communities. To facilitate ease of interpretation and since the CellFindPy communities are hierarchically related, CellFindPy outputs results at 5 levels (branch points) of increasing granularity/depth in addition to a results file containing all communities. In total, 6 csv files are generated assigning each cell to a communitiy. Additionally, to facilitate ease of comparison with other covariates within the Anndata structure, UMAP projections of all Anndata.obs covariates including community assignments are generated and stored in `/figures`. Within `/figures`, UMAP projections of the top n differentially expressed genes are generated for community at each level and for the main results (default 20 genes). 
