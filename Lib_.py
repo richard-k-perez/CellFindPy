@@ -105,10 +105,11 @@ def get_clusters(adata, res = 0.1, initial = False, **params):
             if results_['Genetics'].sum() > 0: # Don't run stability if no communities pass the genetic test.
                 stable_clusters = eval_cluster_stability(adata, res, **params) # Test for cluster stability
                 clusters_passed = test_results(results_, stable_clusters) # Simple readout of results
-                print('Number of Communities Passed: {}'.format(len(clusters_passed)))
+                print('Number of Communities Passed: {}.'.format(len(clusters_passed)))
                 to_cluser_ = list(clusters_passed) # Add clusters to list to recluster
             else:
                 to_cluser_ = []
+                print('Number of Communities Passed: 0.')
     else:
         to_cluser_ = []
 
@@ -163,7 +164,7 @@ def find_resolution(adata, **params):
 
 def subcluster(adata, to_cluser_, **params):
     while len(to_cluser_) != 0: # Subcluster all clusters to find true populations
-        print('Communities queued {}'.format(to_cluser_))
+        print('Communities queued: {}'.format(to_cluser_))
         print('Subclustering {}'.format(to_cluser_[0]))
 
         tmp_ = adata[adata.obs['CellFindPy']==str(to_cluser_[0])].copy() # Copy dataframe
@@ -193,7 +194,7 @@ def do_final_de_eval(adata, **params):
     overclustered_ = results_[np.ravel(results_.values==False)].index.tolist() # Get non-unique clusters.
     # Collapse clusters that are not unique compared to all other clusters and it is not a parent node.
     while len(overclustered_) > 0:
-        print('Communities that are not unique with respect to all other communities: {}'.format(overclustered_))
+        print('Communities that are not unique with respect to all other communities: {}.'.format(overclustered_))
         c_len = [len(c.split('.')) for c in overclustered_] # How many levels exist for each cluster
         c = overclustered_[np.argmax(c_len)] # Choose the community with the most levels.
         if len(c.split('.')) > 1:
@@ -210,7 +211,7 @@ def do_final_de_eval(adata, **params):
             overclustered_ = results_[np.ravel(results_.values==False)].index.tolist() # Get non-unique clusters.
         else:
             if len(overclustered_) > 0:
-                print('Unable to collapse the following communities: {}'.format(overclustered_))
+                print('Unable to collapse the following communities: {}.'.format(overclustered_))
             break
     adata.obs['CellFindPy'] = adata.obs['CellFindPy'].astype('category')
     return adata

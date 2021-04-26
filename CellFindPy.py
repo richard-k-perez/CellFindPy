@@ -6,7 +6,7 @@ import os
 import scanpy as sc
 import warnings
 from numba.core.errors import NumbaPerformanceWarning
-warnings.simplefilter('ignore', category=NumbaPerformanceWarning)
+warnings.simplefilter('ignore', category=NumbaPerformanceWarning) # Fix this with update if possible
 
 def main(AnnData, output_folder, **params):
 	# Set warning settings
@@ -41,7 +41,7 @@ def main(AnnData, output_folder, **params):
 	sc.pp.neighbors(adata, random_state=0, n_neighbors=100, method='umap')
 	sc.tl.umap(adata, random_state=0)
 
-	print('Genetic Parameters: Average log2FC greater than log2({}) from at least {} significant genes at B-H FDR  of {}.'.format(2**params['logFC_threshold'], params['min_sig_genes'], params['pval']))
+	print('Genetic Parameters: Average log2FC greater than log2({}) from at least {} significant genes at B-H FDR of {}.'.format(2**params['logFC_threshold'], params['min_sig_genes'], params['pval']))
 	# Find initial community detection resolution
 	init_res = cf.find_resolution(adata, **params)
 	# Get initial communities
