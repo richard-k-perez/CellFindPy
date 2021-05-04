@@ -348,7 +348,7 @@ def generate_gene_output(adata, **params):
             else:
                 os.mkdir('{}/figures/{}/{}'.format(folderpath, obs, key))
             os.chdir('{}/figures/{}/{}'.format(folderpath, obs, key)) # Change directory
-            for g in df_rest[key].sort_values(ascending=False).index.tolist()[:5]:# NEED TO CHANGE BACK TO params##############################
+            for g in df_rest[key].sort_values(ascending=False).index.tolist()[:params['n_genes']]:
                 sc.pl.umap(adata, color=[g, obs], wspace=.25, legend_loc='on data', legend_fontsize=7,
                 save='{}.png'.format(g), show=False)
             os.chdir('{}'.format(folderpath)) # Change directory back
@@ -363,7 +363,7 @@ def generate_gene_output(adata, **params):
             os.mkdir('{}/{}'.format(path, var))
 
 
-    def subcompare(adata, obs, path):
+    def subcompare(adata, obs, path, **params):
         nodes_to_subprofile = np.sort(adata.obs[obs].unique().tolist())
         for node in nodes_to_subprofile:
             tmp = adata[adata.obs[obs]==node] # Slice dataframe
@@ -373,11 +373,11 @@ def generate_gene_output(adata, **params):
                 # Check if output directory already exist else make a new directory.
                 make_folder(path, node)
                 os.chdir('{}/{}'.format(path, node)) # Change directory
-                generate_sheets(tmp, node)
+                generate_sheets(tmp, node, **params)
                  # Are more subcommunities present?
                 if np.max([len(s.split('.')) for s in tmp.obs['CellFindPy'].tolist()]) > len(node.split('.'))+1:
                     subpath = os.getcwd() # Get current directory
-                    subcompare(tmp, node, subpath) # Recursively generate comparisons
+                    subcompare(tmp, node, subpath, **params) # Recursively generate comparisons
                 else:
                     os.chdir('{}'.format(path)) # Change directory back
             else:
@@ -389,6 +389,6 @@ def generate_gene_output(adata, **params):
     adata.obs[obs] = ['.'.join(s.split('.')[0]) for s in adata.obs['CellFindPy'].tolist()]
     make_folder(path, obs)
     os.chdir('{}/{}'.format(path, obs)) # Change directory
-    generate_sheets(adata, obs) # Generate parent community comparisons
+    generate_sheets(adata, obs, **params) # Generate parent community comparisons
     path = os.getcwd() # get current directory
-    subcompare(adata, 'Top_Communities', path)
+    subcompare(adata, 'Top_Communities', path, **params)
