@@ -31,13 +31,14 @@ For more information, type `python /path/to/CellFindPy/CellFindPy.py -h`
 -ng ------- Number of genes from each community to make UMAP projections for?
 
 ## **Output:**
-CellfindPy aims to identify all possible communities within your dataset based on user defined biological parameters. For larger datasets, this can result in a very large number of communities. To facilitate ease of interpretation and since the CellFindPy communities are hierarchically related, CellFindPy outputs results at 5 levels (branch points) of increasing granularity/depth in addition to a results file containing all communities. In total, 6 csv files are generated assigning each cell to a communitiy. Additionally, to facilitate ease of comparison with other covariates within the Anndata structure, UMAP projections of all Anndata.obs covariates including community assignments are generated and stored in `/figures`. Within `/figures`, UMAP projections of the top n differentially expressed genes are generated for community at each level and for the main results (default 20 genes). 
+CellfindPy aims to identify all possible communities within a dataset based on user defined biological parameters. For larger datasets, this can result in a very large number of communities. To facilitate ease of interpretation and since the CellFindPy communities are hierarchically related, CellFindPy community labels are produced at 3 levels (branch points) of increasing granularity/depth in addition to a results file containing all communities. For interpretation purposes, a nested folder structure is constructed containing excel files containing useful genetic information (e.g. top expressed genes and top differentially expressed genes) and comparisons for each community against other communities at the same level. Additionally, to facilitate ease of comparison with other covariates within the Anndata structure, UMAP projections of all Anndata.obs covariates including community assignments are generated and stored in `/figures`. Within `/figures`, UMAP projections of the top n differentially expressed genes are generated for community (default 20 genes). 
 
-To make it easy to label communities, at all 5 levels and for the complete CellFindPy results, an excel sheet is generated containing the following:
+The genetic excel sheet contains the following:
 1) Top 100 expressed genes for each community.
 2) Mean expression of each gene within each community (non-significant values are zeroed).
 3) Top 100 differentially expressed genes for each community (some communities may have less than 100 genes).
-4) Differential expression of each gene within each community (non-significant values are zeroed).
+4) Differential expression of each gene within each community versus all others (non-significant values are zeroed).
+5) Differential expression of each gene within each community versus a specific community (non-significant values are zeroed).
 
 ## **Requirements:**
 anndata==0.6.22.post1\
