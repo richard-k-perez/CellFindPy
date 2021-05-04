@@ -271,10 +271,36 @@ def generate_gene_output(adata, **params):
         GeneDE = GeneDE[:n_genes]
         return GeneDE
 
-    observations = ['CFPy Level 1', 'CFPy Level 2','CFPy Level 3', 'CFPy Level 4', 'CFPy Level 5', 'CellFindPy']
-    sc.settings.set_figure_params(dpi=100, dpi_save=300, format='png', frameon=False, transparent=True, fontsize=16)
-    for obs in observations:
+
+    def rank_genes(adata, groups, refs, obsvar):
+        first = True
+        for ii in range(len(groups)):
+            for jj in range(len(refs)):
+                if groups[ii] != refs[jj]:
+                    sc.tl.rank_genes_groups(adata, groupby=obsvar, groups=[groups[ii]] , reference=refs[jj], use_raw=True,
+                                            method='wilcoxon', corr_method='benjamini-hochberg', tie_correct=True, n_genes=adata.raw.shape[1])
+                    df = pd.DataFrame.from_records(adata.uns['rank_genes_groups']['names']).rename(columns={str(groups[ii]): "Genes"})
+                    df = pd.concat([df, pd.DataFrame.from_records(adata.uns['rank_genes_groups']['logfoldchanges']).rename(columns={str(groups[ii]): "{}-vs-{}".format(groups[ii], refs[jj])})], axis=1)
+                    df = pd.concat([df, pd.DataFrame.from_records(adata.uns['rank_genes_groups']['pvals_adj']).rename(columns={str(groups[ii]): "p_adj_{}-vs-{}".format(groups[ii], refs[jj])})], axis=1)
+                    df = df.set_index('Genes')
+                    # Replace Log2FC values with 0 (Not Significant) for p values >= 0.001
+                    df["{}-vs-{}".format(groups[ii],refs[jj])].loc[df["p_adj_{}-vs-{}".format(groups[ii],refs[jj])] >= 0.001] = 0
+                    # Drop p value column
+                    df = df.drop("p_adj_{}-vs-{}".format(groups[ii],refs[jj]), axis=1)
+                    if first == True:
+                        df_Master = df
+                        first = False
+                    else:
+                        df_Master = pd.concat([df_Master, df], axis=1)
+        return df_Master
+
+
+    def generate_sheets(adata, obs, **params):
         print('Generating Gene Expression Sheet and Figures for {}'.format(obs))
+        # Make covariate figures
+        for obs in list(adata.obs.keys()): # Make umap of every obs value
+            sc.pl.umap(adata, color=obs, save='{}.png'.format(obs), show=False)
+
         # Create a Pandas Excel writer using XlsxWriter as the engine.
         writer = pd.ExcelWriter('{}_Gene_Expression.xlsx'.format(obs), engine='xlsxwriter')
 
@@ -296,10 +322,18 @@ def generate_gene_output(adata, **params):
         DE.to_excel(writer, sheet_name='{} Top DE Genes'.format(obs))
         df_rest.to_excel(writer, sheet_name='{} Groups vs Rest'.format(obs))
         ### =================== ###
+        ### Differential expression of each community versus every other at the same level ###
+        groups = np.sort(adata.obs[obs].unique().tolist())
+        for g in groups:
+            df = rank_genes(adata, [g], refs=groups, obsvar=obs)
+            df.to_excel(writer, sheet_name='{}'.format(g))
+        ### =================== ###
+
         # Close the Pandas Excel writer and output the Excel file.
         writer.save()
         ###   Make Graphs   ###
         folderpath = os.getcwd() # Get current directory
+
         if os.path.isdir('{}/figures/{}'.format(folderpath, obs)) == True:
             print('{} exists.'.format(obs))
             print('Continuing may overright files in folder.')
@@ -314,7 +348,47 @@ def generate_gene_output(adata, **params):
             else:
                 os.mkdir('{}/figures/{}/{}'.format(folderpath, obs, key))
             os.chdir('{}/figures/{}/{}'.format(folderpath, obs, key)) # Change directory
-            for g in df_rest[key].sort_values(ascending=False).index.tolist()[:params['n_genes']]:
+            for g in df_rest[key].sort_values(ascending=False).index.tolist()[:5]:# NEED TO CHANGE BACK TO params##############################
                 sc.pl.umap(adata, color=[g, obs], wspace=.25, legend_loc='on data', legend_fontsize=7,
                 save='{}.png'.format(g), show=False)
             os.chdir('{}'.format(folderpath)) # Change directory back
+
+
+    def make_folder(path, var):
+        # Check if output directory already exist else make a new directory.
+        if os.path.isdir('{}/{}'.format(path, var)) == True:
+            print('Folder already exists.')
+            print('Content may be overwritten.')
+        else:
+            os.mkdir('{}/{}'.format(path, var))
+
+
+    def subcompare(adata, obs, path):
+        nodes_to_subprofile = np.sort(adata.obs[obs].unique().tolist())
+        for node in nodes_to_subprofile:
+            tmp = adata[adata.obs[obs]==node] # Slice dataframe
+            # Are subcommunities present?
+            if np.max([len(s.split('.')) for s in tmp.obs['CellFindPy'].tolist()]) > len(node.split('.')):
+                tmp.obs[node] = ['.'.join(s.split('.')[:len(node.split('.'))+1]) for s in tmp.obs['CellFindPy'].tolist()]
+                # Check if output directory already exist else make a new directory.
+                make_folder(path, node)
+                os.chdir('{}/{}'.format(path, node)) # Change directory
+                generate_sheets(tmp, node)
+                 # Are more subcommunities present?
+                if np.max([len(s.split('.')) for s in tmp.obs['CellFindPy'].tolist()]) > len(node.split('.'))+1:
+                    subpath = os.getcwd() # Get current directory
+                    subcompare(tmp, node, subpath) # Recursively generate comparisons
+                else:
+                    os.chdir('{}'.format(path)) # Change directory back
+            else:
+                print('Community {} did not have sub-communities to compare.'.format(node))
+                continue
+
+    path = os.getcwd() # Get current directory
+    obs = 'Top_Communities' # Get Top level Communities
+    adata.obs[obs] = ['.'.join(s.split('.')[0]) for s in adata.obs['CellFindPy'].tolist()]
+    make_folder(path, obs)
+    os.chdir('{}/{}'.format(path, obs)) # Change directory
+    generate_sheets(adata, obs) # Generate parent community comparisons
+    path = os.getcwd() # get current directory
+    subcompare(adata, 'Top_Communities', path)

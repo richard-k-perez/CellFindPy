@@ -53,9 +53,9 @@ def main(AnnData, output_folder, **params):
 
 	os.chdir('{}/{}'.format(path, output_folder)) # Change directory
 	adata.obs['CellFindPy'].to_csv('CellFindPy_Groups.csv') # Save labels
-	for ii in range(5): # Create 5 levels of communities for better interpretation.
-		adata.obs['CFPy Level {}'.format(ii+1)] = ['.'.join(s.split('.')[:int(ii+1)]) for s in adata.obs['CellFindPy'].tolist()]
-		adata.obs['CFPy Level {}'.format(ii+1)].to_csv('CellFindPy_CFPy_Level_{}.csv'.format(ii+1)) # Save labels
+	for ii in range(3): # Create 3 levels of communities for better interpretation.
+		adata.obs['CellFindPy_Level {}'.format(ii+1)] = ['.'.join(s.split('.')[:int(ii+1)]) for s in adata.obs['CellFindPy'].tolist()]
+		adata.obs['CellFindPy_Level {}'.format(ii+1)].to_csv('CellFindPy_Level_{}.csv'.format(ii+1)) # Save labels
 
 	sc.settings.set_figure_params(dpi=100, dpi_save=300, format='png', frameon=False, transparent=True, fontsize=16)
 	for obs in list(adata.obs.keys()): # Make umap of every obs value
