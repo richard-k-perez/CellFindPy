@@ -37,8 +37,8 @@ The genetic excel sheet contains the following:
 1) Top 100 expressed genes for each community.
 2) Mean expression of each gene within each community (non-significant values are zeroed).
 3) Top 100 differentially expressed genes for each community (some communities may have less than 100 genes).
-4) Differential expression of each gene within each community versus all others (non-significant values are zeroed).
-5) Differential expression of each gene within each community versus a specific community (non-significant values are zeroed).
+4) Differential expression of each gene within each community versus all others at the same level (non-significant values are zeroed).
+5) Differential expression of each gene within each community versus a specific community at the same level (non-significant values are zeroed).
 
 ## **Requirements:**
 anndata==0.6.22.post1\
